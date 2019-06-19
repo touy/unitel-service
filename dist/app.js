@@ -44,7 +44,6 @@ var uuidV4 = require("uuid");
 var cors = require("cors");
 var http = require("http");
 var redis = require("redis");
-var pretty = require("express-prettify");
 // import * as passwordValidator from 'password-validator';
 var passwordValidator = require('password-validator');
 var Q = require("q");
@@ -379,25 +378,25 @@ var App = /** @class */ (function () {
     App.prototype.unitelCheckStartEndPromotion = function (res, number) {
         var u = unitel.default;
         u.checkStartEndPromotion(number).then(function (r) {
-            res.json(r);
+            res.send(r);
         }).catch(function (err) {
-            res.json(err);
+            res.send((err));
         });
     };
     App.prototype.unitelCheckSubscriberChargeDetails = function (res, number) {
         var u = unitel.default;
         u.checkSubscriberChargeDetails(number).then(function (r) {
-            res.json(r);
+            res.send(r);
         }).catch(function (err) {
-            res.json(err);
+            res.send((err));
         });
     };
     App.prototype.unitelCheckBalanceData = function (res, number) {
         var u = unitel.default;
         u.checkBalanceData(number).then(function (r) {
-            res.json(r);
+            res.send((r));
         }).catch(function (err) {
-            res.json(err);
+            res.send((err));
         });
     };
     App.prototype.initDB = function () {
@@ -516,7 +515,6 @@ var App = /** @class */ (function () {
         console.log(f, p.length ? p : '');
     };
     App.prototype.config = function () {
-        this.app.use(pretty({ query: 'pretty' }));
         this.app.set('trust proxy', true);
         this.app.use(methodOverride());
         this.app.use(cors());
@@ -541,7 +539,8 @@ var App = /** @class */ (function () {
         });
         router.all('/unitelCheckStartEndPromotion', function (req, res) {
             _this.clog('OK unitel check start end promotion');
-            console.log(req.query);
+            //console.log(req);
+            //console.log(req.query);
             var number = req.query.number;
             _this.unitelCheckStartEndPromotion(res, number);
         });

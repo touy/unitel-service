@@ -1,3 +1,217 @@
 <html>
-    <H1>OK</H1>
+<header>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script>
+        String.prototype.format = function () {
+            var formatted = this;
+            for (var i = 0; i < arguments.length; i++) {
+                var regexp = new RegExp('\\{' + i + '\\}', 'gi');
+                formatted = formatted.replace(regexp, arguments[i]);
+            }
+            return formatted;
+        };
+
+        function getInputVal() {
+
+            var numb = $('#inputnumbers').val();
+            var arrNumb = [];
+            numb.split('\n').forEach(element => {
+                arrNumb.push(element);
+            });
+            return arrNumb;
+        }
+
+        function validateNumbers(n) {
+            switch (n) {
+                case n.length < 10 || n.length > 10:
+                    return 'Error Numbers must be 10 digits';
+                    break;
+                case isNaN(n):
+                    return "Error Accept numbers only";
+                    break;
+                default:
+                    return 'OK';
+                    break;
+            }
+        }
+
+        function checkbalancedata() {
+            $("#process").html('<h1>check balance</h1>');
+            $('#results').html('');
+            $('#errors').html('');
+            $('#resultdes').text(
+                'active / Balance / free SMS / promoTionFreeData1 /promoTionFreeData2 / promoTionFreeData3 / serviceClassCode'
+                );
+            var arrNumb = getInputVal();
+            for (let index = 0; index < arrNumb.length; index++) {
+                const element = arrNumb[index];
+                if (element === '') {
+                    arrNumb.splice(index, 1);
+                    $('#errors').append('<div>empty:' + index + 1 + "</div>");
+                    continue;
+                }
+                res = '';
+                if (res = validateNumbers(element) !== 'OK') {
+                    $('#errors').append("<div>" + element + ':' + res + "</div>");
+                }
+            }
+            for (let index = 0; index < arrNumb.length; index++) {
+                const element = arrNumb[index];
+                setTimeout(() => {
+                    var request = $.ajax({
+                        url: "/unitelCheckBalanceData?number=" + "856" + element,
+                        method: "GET",
+                        dataType: "html"
+                    });
+
+                    request.done(function (msg) {
+                        //alert(msg);
+                        msg = JSON.parse(msg);
+                        var r = "<div>{0}: {1} / {2} / {3} / {4} / {5} / {6} / {7}</div>".format(element,msg
+                            .activeDate, msg.basicBalance[0], msg.freeSms[0], msg
+                            .promoTionFreeData1[0], msg.promoTionFreeData2[0], msg
+                            .promoTionFreeData3[0], msg.serviceClassCode[0]);
+                        $("#results").append(r);
+                    });
+
+                    request.fail(function (jqXHR, textStatus) {
+                        $("#errors").append("<div>" + element + ':' + textStatus + "</div>");
+                    });
+                    console.log("start index " + index + 1);
+                }, 1000 * (index + 1));
+                console.log("this will start in " + index + 1);
+            }
+        }
+
+        function checkpromotion() {
+            $("#process").html('<h1>check promotion</h1>');
+            $('#results').html('');
+            $('#errors').html('');
+            $('#resultdes').text(
+                'start / end '
+                );
+            var arrNumb = getInputVal();
+            for (let index = 0; index < arrNumb.length; index++) {
+                const element = arrNumb[index];
+                if (element === '') {
+                    arrNumb.splice(index, 1);
+                    $('#errors').append('<div>empty:' + index + 1 + "</div>");
+                    continue;
+                }
+                res = '';
+                if (res = validateNumbers(element) !== 'OK') {
+                    $('#errors').append("<div>" + element + ':' + res + "</div>");
+                }
+            }
+            for (let index = 0; index < arrNumb.length; index++) {
+                const element = arrNumb[index];
+                setTimeout(() => {
+                    var request = $.ajax({
+                        url: "/unitelCheckStartEndPromotion?number=" + "856" + element,
+                        method: "GET",
+                        dataType: "html"
+                    });
+
+                    request.done(function (msg) {
+                        //alert(msg);
+                        msg = JSON.parse(msg);
+                        var r = "<div>{0}: {1} / {2} </div>".format(element,msg.startPromotion,msg.endPromotion);
+                        $("#results").append(r);
+                    });
+
+                    request.fail(function (jqXHR, textStatus) {
+                        $("#errors").append("<div>" + element + ':' + textStatus + "</div>");
+                    });
+                    console.log("start index " + index + 1);
+                }, 1000 * (index + 1));
+                console.log("this will start in " + index + 1);
+            }
+        }
+
+        function checkchargedetails() {
+            $("#process").html('<h1>check charge details</h1>');
+            $('#results').html('');
+            $('#errors').html('');
+            $('#resultdes').text(
+                'smsfreeB / smsfreeA / datafreeB / datafreeA / charged'
+                );
+            var arrNumb = getInputVal();
+            for (let index = 0; index < arrNumb.length; index++) {
+                const element = arrNumb[index];
+                if (element === '') {
+                    arrNumb.splice(index, 1);
+                    $('#errors').append('<div>empty:' + index + 1 + "</div>");
+                    continue;
+                }
+                res = '';
+                if (res = validateNumbers(element) !== 'OK') {
+                    $('#errors').append("<div>" + element + ':' + res + "</div>");
+                }
+            }
+            for (let index = 0; index < arrNumb.length; index++) {
+                const element = arrNumb[index];
+                setTimeout(() => {
+                    var request = $.ajax({
+                        url: "/unitelCheckSubscriberChargeDetails?number=" + "856" + element,
+                        method: "GET",
+                        dataType: "html"
+                    });
+
+                    request.done(function (msg) {
+                        //alert(msg);
+                        msg = JSON.parse(msg);
+                        console.log(msg);
+                        msg=msg.result.checkVtracking;
+                        var r = "<div>{0}: {1} / {2} / {3} / {4}  / {5} </div>".format(element,msg.smsfreeBefore,msg.smsfreeAfter,msg.data2FreeBefore,msg.data2FreeAfter,msg.dateCharge);
+                        $("#results").append(r);
+                    });
+
+                    request.fail(function (jqXHR, textStatus) {
+                        $("#errors").append("<div>" + element + ':' + textStatus + "</div>");
+                    });
+                    console.log("start index " + index + 1);
+                }, 1000 * (index + 1));
+                console.log("this will start in " + index + 1);
+            }
+        }
+    </script>
+</header>
+
+<body>
+    <div id="process">
+        <h1>Unitel subscriber checking service</h1>
+    </div>
+    <table style="width: 100%; height: 500px; border: 3px; border-style: dotted">
+        <tr>
+            <th>
+                Numbers: <br />
+                <button onClick="checkpromotion()">Check promotion</button>
+                <button onClick="checkchargedetails()">Check charge details</button>
+                <button onClick="checkbalancedata()">Check balance data</button>
+            </th>
+            <th>
+                results:
+                <div id="resultdes"></div>
+            </th>
+            <th>
+                Errors:
+                <div id="errdes"></div>
+            </th>
+        </tr>
+        <tr>
+            <td>
+                <textarea id="inputnumbers" style="width: 100%; height: 100%;"></textarea>
+            </td>
+            <td>
+                <div id="results" style="width: 100%; height: 100%;"></div>
+            </td>
+            <td>
+                <div id="errors" style="width: 100%; height: 100%;"></div>
+            </td>
+        </tr>
+    </table>
+
+</body>
+
 </html>
