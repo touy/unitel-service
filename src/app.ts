@@ -9,6 +9,7 @@ import * as cors from 'cors';
 import * as fs from 'fs';
 import * as http from 'http';
 import * as redis from 'redis';
+import * as pretty from 'express-prettify'
 // import * as __browser from 'detect-browser';
 import * as path from 'path';
 // import * as passwordValidator from 'password-validator';
@@ -30,7 +31,7 @@ import * as unitel from './unitel_api_module';
 
 class App {
     private timeout = ms => new Promise(res => setTimeout(res, ms));
-    
+
     commandReader(js) {
         const deferred = Q.defer();
         // const isValid=validateTopup(js.client);
@@ -295,7 +296,7 @@ class App {
     private phoneValidator: any;
     private _current_system: string;
     private __design_view: string = "objectList";
-    
+
     private __design_device = {
         "_id": "_design/objectList",
         "views": {
@@ -330,7 +331,7 @@ class App {
         "language": "javascript"
 
     }
-  
+
     constructor() {
         this.convertTZ(moment.now());
         this._current_system = 'unitel-service';
@@ -375,19 +376,44 @@ class App {
 
         this.initDB();
 
-        let u=unitel.default;
+        let u = unitel.default;
         console.log('init u');
-        console.log('check start');
-        let number ='8562098860280';
+        //console.log('check start');
+        //let number ='8562098860280';
         //let number = '8562097299830';
-        u.checkStartEndPromotion(number);
-        u.checkSubscriberChargeDetails(number);
-        u.checkBalanceData(number);
+        // u.checkStartEndPromotion(number);
+        // u.checkSubscriberChargeDetails(number);
+        // u.checkBalanceData(number);
     }
+    unitelCheckStartEndPromotion(res: Response, number: string): any {
+        let u = unitel.default;
+        u.checkStartEndPromotion(number).then(r => {
+            res.send(r);
+        }).catch(err => {
+            res.send((err));
+        });
+    }
+    unitelCheckSubscriberChargeDetails(res: Response, number: string): any {
+        let u = unitel.default;
 
+        u.checkSubscriberChargeDetails(number).then(r => {
+            res.send(r);
+        }).catch(err => {
+            res.send((err));
+        });
+
+    }
+    unitelCheckBalanceData(res: Response, number: string): any {
+        let u = unitel.default;
+        u.checkBalanceData(number).then(r => {
+            res.send((r));
+        }).catch(err => {
+            res.send((err));
+        });
+    }
     initDB(): void {
         // init_db('icemaker_device', __design_icemakerdevice);
-        this.init_db('icemaker_device', this.__design_device);
+        //this.init_db('icemaker_device', this.__design_device);
         // init_db('raws', __design_raw);    
         //this.init_db('alarm_record', this.__design_alarm);
         // init_db('status_record', __design_status);        
@@ -495,7 +521,7 @@ class App {
     clog(f: string, ...p) {
         console.log(f, p.length ? p : '');
     }
-    private config(): void {
+    private config(): void {        
         this.app.set('trust proxy', true);
         this.app.use(methodOverride());
         this.app.use(cors());
@@ -514,17 +540,34 @@ class App {
     }
     private routes(): void {
         const router = express.Router();
-        this.app.use('/public', express.static(__dirname + '../../../public'));
+        this.app.use('/public', express.static('public'));
         this.app.use(this.errorHandler);
         router.all('/', (req: Request, res: Response) => {
             this.clog('OK Test');
-            res.sendFile(path.join(__dirname + '../../../index.html'));
+            res.redirect('/public');
         });
-        router.all('/cleanBillAndPayment', (req: Request, res: Response) => {
-            
-            this.clog('clean OK');
+        router.all('/unitelCheckStartEndPromotion', (req: Request, res: Response) => {
+            this.clog('OK unitel check start end promotion');
+            //console.log(req);
+            //console.log(req.query);
+            let number = req.query.number;
+            this.unitelCheckStartEndPromotion(res, number);
+        });
+        router.all('/unitelCheckSubscriberChargeDetails', (req: Request, res: Response) => {
+            this.clog('OK  unitel check subscriber charger details');
+            let number = req.query.number;
+            this.unitelCheckSubscriberChargeDetails(res, number);
+        });
+        router.all('/unitelCheckBalanceData', (req: Request, res: Response) => {
+            this.clog('OK  unitel check balance data');
+            let number = req.query.number;
+            this.unitelCheckBalanceData(res, number);
+        });
+        // router.all('/cleanBillAndPayment', (req: Request, res: Response) => {
 
-        });
+        //     this.clog('clean OK');
+
+        // });
         this.app.use('/', router);
 
         // this.app.all('/', (req: Request, res: Response) => {
