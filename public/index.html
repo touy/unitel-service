@@ -42,7 +42,7 @@
             $('#errors').html('');
             $('#resultdes').text(
                 'active / Balance / free SMS / promoTionFreeData1 /promoTionFreeData2 / promoTionFreeData3 / serviceClassCode'
-                );
+            );
             var arrNumb = getInputVal();
             for (let index = 0; index < arrNumb.length; index++) {
                 const element = arrNumb[index];
@@ -68,11 +68,20 @@
                     request.done(function (msg) {
                         //alert(msg);
                         msg = JSON.parse(msg);
-                        var r = "<div>{0}: {1} / {2} / {3} / {4} / {5} / {6} / {7}</div>".format(element,msg
-                            .activeDate, msg.basicBalance[0], msg.freeSms[0], msg
-                            .promoTionFreeData1[0], msg.promoTionFreeData2[0], msg
-                            .promoTionFreeData3[0], msg.serviceClassCode[0]);
-                        $("#results").append(r);
+                        if (msg.code[0] === '0') {
+                            var r = "<div>{0}: {1} / {2} / {3} / {4} / {5} / {6} / {7}</div>".format(
+                                element, msg
+                                .activeDate, msg.basicBalance[0], msg.freeSms[0], msg
+                                .promoTionFreeData1[0], msg.promoTionFreeData2[0], msg
+                                .promoTionFreeData3[0], msg.serviceClassCode[0]);
+                            $("#results").append(r);
+                        } else {
+                            var r = "<div>{0}: {1} / {2} </div>".format(
+                                element, msg
+                                .code[0], msg.description[0]);
+                            $("#results").append(r);
+                        }
+
                     });
 
                     request.fail(function (jqXHR, textStatus) {
@@ -90,7 +99,7 @@
             $('#errors').html('');
             $('#resultdes').text(
                 'start / end '
-                );
+            );
             var arrNumb = getInputVal();
             for (let index = 0; index < arrNumb.length; index++) {
                 const element = arrNumb[index];
@@ -116,8 +125,17 @@
                     request.done(function (msg) {
                         //alert(msg);
                         msg = JSON.parse(msg);
-                        var r = "<div>{0}: {1} / {2} </div>".format(element,msg.startPromotion,msg.endPromotion);
-                        $("#results").append(r);
+                        if (msg.code[0] === '0') {
+                            var r = "<div>{0}: {1} / {2} </div>".format(element, msg.startPromotion, msg
+                                .endPromotion);
+                            $("#results").append(r);
+                        } else {
+                            var r = "<div>{0}: {1} / {2} </div>".format(
+                                element, msg
+                                .code[0], msg.description[0]);
+                            $("#results").append(r);
+                        }
+
                     });
 
                     request.fail(function (jqXHR, textStatus) {
@@ -135,7 +153,7 @@
             $('#errors').html('');
             $('#resultdes').text(
                 'smsfreeB / smsfreeA / datafreeB / datafreeA / charged'
-                );
+            );
             var arrNumb = getInputVal();
             for (let index = 0; index < arrNumb.length; index++) {
                 const element = arrNumb[index];
@@ -161,10 +179,19 @@
                     request.done(function (msg) {
                         //alert(msg);
                         msg = JSON.parse(msg);
-                        console.log(msg);
-                        msg=msg.result.checkVtracking;
-                        var r = "<div>{0}: {1} / {2} / {3} / {4}  / {5} </div>".format(element,msg.smsfreeBefore,msg.smsfreeAfter,msg.data2FreeBefore,msg.data2FreeAfter,msg.dateCharge);
-                        $("#results").append(r);
+                        if (msg.code[0] === '0') {
+                            msg = msg.result.checkVtracking;
+                            var r = "<div>{0}: {1} / {2} / {3} / {4}  / {5} </div>".format(element, msg
+                                .smsfreeBefore, msg.smsfreeAfter, msg.data2FreeBefore, msg
+                                .data2FreeAfter, msg.dateCharge);
+                            $("#results").append(r);
+                        } else {
+                            var r = "<div>{0}: {1} / {2} </div>".format(
+                                element, msg
+                                .code[0], msg.description[0]);
+                            $("#results").append(r);
+                        }
+
                     });
 
                     request.fail(function (jqXHR, textStatus) {
