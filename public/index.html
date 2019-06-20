@@ -68,7 +68,7 @@
                     request.done(function (msg) {
                         //alert(msg);
                         msg = JSON.parse(msg);
-                        if (msg.code[0] === '0') {
+                        if (msg.responseCode[0] === '0') {
                             var r = "<div>{0}: {1} / {2} / {3} / {4} / {5} / {6} / {7}</div>".format(
                                 element, msg
                                 .activeDate, msg.basicBalance[0], msg.freeSms[0], msg
@@ -78,7 +78,7 @@
                         } else {
                             var r = "<div>{0}: {1} / {2} </div>".format(
                                 element, msg
-                                .code[0], msg.description[0]);
+                                .responseCode[0], msg.description[0]);
                             $("#results").append(r);
                         }
 
@@ -125,14 +125,14 @@
                     request.done(function (msg) {
                         //alert(msg);
                         msg = JSON.parse(msg);
-                        if (msg.code[0] === '0') {
+                        if (msg.responseCode[0] === '0') {
                             var r = "<div>{0}: {1} / {2} </div>".format(element, msg.startPromotion, msg
                                 .endPromotion);
                             $("#results").append(r);
                         } else {
                             var r = "<div>{0}: {1} / {2} </div>".format(
                                 element, msg
-                                .code[0], msg.description[0]);
+                                .responseCode[0], msg.description[0]);
                             $("#results").append(r);
                         }
 
@@ -179,7 +179,7 @@
                     request.done(function (msg) {
                         //alert(msg);
                         msg = JSON.parse(msg);
-                        if (msg.code[0] === '0') {
+                        if (msg.responseCode[0] === '0') {
                             msg = msg.result.checkVtracking;
                             var r = "<div>{0}: {1} / {2} / {3} / {4}  / {5} </div>".format(element, msg
                                 .smsfreeBefore, msg.smsfreeAfter, msg.data2FreeBefore, msg
@@ -188,7 +188,7 @@
                         } else {
                             var r = "<div>{0}: {1} / {2} </div>".format(
                                 element, msg
-                                .code[0], msg.description[0]);
+                                .responseCode[0], msg.description[0]);
                             $("#results").append(r);
                         }
 
