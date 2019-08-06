@@ -41,7 +41,7 @@
             $('#results').html('');
             $('#errors').html('');
             $('#resultdes').text(
-                'active / Balance / free SMS / promoTionFreeData1 /promoTionFreeData2 / promoTionFreeData3 / serviceClassCode'
+                'active,Balance,free SMS,promoTionFreeData1,promoTionFreeData2,promoTionFreeData3,serviceClassCode'
             );
             var arrNumb = getInputVal();
             for (let index = 0; index < arrNumb.length; index++) {
@@ -69,14 +69,14 @@
                         //alert(msg);
                         msg = JSON.parse(msg);
                         if (msg.responseCode[0] === '0') {
-                            var r = "<div>{0}: {1} / {2} / {3} / {4} / {5} / {6} / {7}</div>".format(
+                            var r = "<div>{0},{1},{2},{3},{4},{5}{6},{7}</div>".format(
                                 element, msg
                                 .activeDate, msg.basicBalance[0], msg.freeSms[0], msg
                                 .promoTionFreeData1[0], msg.promoTionFreeData2[0], msg
                                 .promoTionFreeData3[0], msg.serviceClassCode[0]);
                             $("#results").append(r);
                         } else {
-                            var r = "<div>{0}: {1} / {2} </div>".format(
+                            var r = "<div>{0},{1},{2}</div>".format(
                                 element, msg
                                 .responseCode[0], msg.description[0]);
                             $("#results").append(r);
@@ -110,7 +110,7 @@
                 }
                 res = '';
                 if (res = validateNumbers(element) !== 'OK') {
-                    $('#errors').append("<div>" + element + ':' + res + "</div>");
+                    $('#errors').append("<div>" + element + ',' + res + "</div>");
                 }
             }
             for (let index = 0; index < arrNumb.length; index++) {
@@ -126,11 +126,11 @@
                         //alert(msg);
                         msg = JSON.parse(msg);
                         if (msg.responseCode[0] === '0') {
-                            var r = "<div>{0}: {1} / {2} </div>".format(element, msg.startPromotion, msg
+                            var r = "<div>{0},{1},{2}</div>".format(element, msg.startPromotion, msg
                                 .endPromotion);
                             $("#results").append(r);
                         } else {
-                            var r = "<div>{0}: {1} / {2} </div>".format(
+                            var r = "<div>{0},{1},{2}</div>".format(
                                 element, msg
                                 .responseCode[0], msg.description[0]);
                             $("#results").append(r);
@@ -152,7 +152,7 @@
             $('#results').html('');
             $('#errors').html('');
             $('#resultdes').text(
-                'smsfreeB / smsfreeA / datafreeB / datafreeA / charged'
+                'smsfreeB , smsfreeA , datafreeB , datafreeA , charged'
             );
             var arrNumb = getInputVal();
             for (let index = 0; index < arrNumb.length; index++) {
@@ -164,7 +164,7 @@
                 }
                 res = '';
                 if (res = validateNumbers(element) !== 'OK') {
-                    $('#errors').append("<div>" + element + ':' + res + "</div>");
+                    $('#errors').append("<div>" + element + ',' + res + "</div>");
                 }
             }
             for (let index = 0; index < arrNumb.length; index++) {
@@ -186,7 +186,7 @@
                                 .data2FreeAfter, msg.dateCharge);
                             $("#results").append(r);
                         } else {
-                            var r = "<div>{0}: {1} / {2} </div>".format(
+                            var r = "<div>{0},{1},{2}</div>".format(
                                 element, msg
                                 .responseCode[0], msg.description[0]);
                             $("#results").append(r);
