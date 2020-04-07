@@ -554,18 +554,31 @@ class App {
             this.clog('OK Test');
             res.redirect('/public');
         });
-        router.all('/sendSMS', (req: Request, res: Response) => {
+        router.post('/sendSMS', (req: Request, res: Response) => {
             this.clog('OK Test');
-            let number = req.query.number||'-';
-            let content = req.query.content||'-';
-            let brand = req.query.brand||'-';
-            setTimeout(() => {
-                if(!number||content.length<10||brand.length<5){
-                    res.send({error:'error',number:number,content:content,brand:brand});
-                }else{
-                    this.sendSMS(res,number,content,brand);
-                }    
-            }, 10000);
+            let number = req.body.number||'-';
+            let content = req.body.content||'-';
+            let brand = req.body.brand||'-';
+            let allowedIPs=['::1','127.0.0.1','localhost','139.5.157.23','162.213.199.43'];
+            let ip:string =  req.connection.remoteAddress;
+            console.log(req.connection.remoteAddress);
+            
+            console.log('from IP:',ip);
+            if(allowedIPs.includes(ip)){
+                setTimeout(() => {
+                    if(!number||content.length<10||brand.length<5){
+                        res.send({error:'error',number:number,content:content,brand:brand});
+                    }
+                    // else if(){
+                        
+                    // }
+                    else{
+                        this.sendSMS(res,number,content,brand);
+                    }    
+                }, 20000);
+            }
+            
+            
             
             
         });
