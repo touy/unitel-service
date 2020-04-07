@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -375,6 +376,14 @@ var App = /** @class */ (function () {
             }
         });
     };
+    App.prototype.sendSMS = function (res, number, content, brand) {
+        var u = unitel.default;
+        u.sendSMS(number, content, brand).then(function (r) {
+            res.send(r);
+        }).catch(function (err) {
+            res.send((err));
+        });
+    };
     App.prototype.unitelCheckStartEndPromotion = function (res, number) {
         var u = unitel.default;
         u.checkStartEndPromotion(number).then(function (r) {
@@ -536,6 +545,18 @@ var App = /** @class */ (function () {
         router.all('/', function (req, res) {
             _this.clog('OK Test');
             res.redirect('/public');
+        });
+        router.all('/sendSMS', function (req, res) {
+            _this.clog('OK Test');
+            var number = req.query.number || '-';
+            var content = req.query.content || '-';
+            var brand = req.query.brand || '-';
+            if (!number || content.length < 10 || brand.length < 5) {
+                res.send({ error: 'error', number: number, content: content, brand: brand });
+            }
+            else {
+                _this.sendSMS(res, number, content, brand);
+            }
         });
         router.all('/unitelCheckStartEndPromotion', function (req, res) {
             _this.clog('OK unitel check start end promotion');

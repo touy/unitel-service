@@ -15,6 +15,32 @@ var App = /** @class */ (function () {
             { code: "-99", description: "Unhandled error, please contact administrator " },
             { code: "0", description: "Success" }
         ];
+        this._errorCode_SMS = [{
+                "ERROR_CODE": 0,
+                "DESCRIPTION": "Invalid username / password"
+            }, {
+                "ERROR_CODE": 1,
+                "DESCRIPTION": "Send Sms Success"
+            }, {
+                "ERROR_CODE": 2,
+                "DESCRIPTION": "Invalid Brandname"
+            }, {
+                "ERROR_CODE": 3,
+                "DESCRIPTION": "Send SMS Failed"
+            }, {
+                "ERROR_CODE": 4,
+                "DESCRIPTION": "Not enough money"
+            }, {
+                "ERROR_CODE": 5,
+                "DESCRIPTION": "Company not permission send    SMS via API"
+            }, {
+                "ERROR_CODE": 6,
+                "DESCRIPTION": "Invalid IP Address"
+            }, {
+                "ERROR_CODE": 7,
+                "DESCRIPTION": "Invalid phone number"
+            }
+        ];
         this._errorCode = [
             {
                 "ERROR_CODE": 1000,
@@ -134,6 +160,68 @@ var App = /** @class */ (function () {
             }
         ];
     }
+    App.prototype.sendSMS = function (msisdn, content, brandname) {
+        var deferred = Q.defer();
+        var url = 'http://183.182.100.154:8181/apiSendSms.php?wsdl';
+        var args = {
+            //sendSMS: {
+            username: "Huakathi_2020",
+            password: "Huakathi!@#123",
+            language_id: 0,
+            brand_name: brandname,
+            content: content,
+            msisdn: msisdn
+            //  wscode: "checkVtracking",
+            // param: [
+            //     { attributes: { name: 'username', value: 'vtracking' } },
+            //     { attributes: { name: 'password', value: 'Vtracking2244@Qwer' } },
+            //     { attributes: { name: 'msisdn', value: msisdn } },
+            //     { attributes: { name: 'typeCheck', value: '1' } },
+            // ]
+            // ,
+            // rawData: ''
+            // }
+        };
+        soap.createClient(url, function (err, client) {
+            if (err) {
+                console.log(err);
+                deferred.reject(err);
+            }
+            else {
+                //client.gwOperation.Input=args;
+                console.log(client.sendSMS.toString());
+                console.log(args);
+                client.sendSMS(args, function (err, result, opt, extraHeader) {
+                    if (err) {
+                        console.log(err);
+                        deferred.reject(err);
+                    }
+                    else {
+                        console.log(result);
+                        xml2js.parseString(result.Result.original, function (err, res) {
+                            if (err) {
+                                console.log(err);
+                                deferred.reject(err);
+                            }
+                            else {
+                                console.log(res);
+                                var r = res['S:Envelope']['S:Body'][0]['ns2:checkVtrackingResponse'][0].return[0];
+                                console.log(r);
+                                // r={ description: [ 'SUCCESS' ],
+                                // endPromotion: [ '11/11/2019' ],
+                                // msisdn: [ '8562097299830' ],
+                                // responseCode: [ '0' ],
+                                // startPromotion: [ '11/11/2018' ],
+                                // typeCheck: [ '1' ] };                                               
+                                deferred.resolve(r);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+        return deferred.promise;
+    };
     App.prototype.checkStartEndPromotion = function (msisdn) {
         var deferred = Q.defer();
         var url = 'http://183.182.100.133:8999/BCCSGateway?wsdl';

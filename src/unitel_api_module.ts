@@ -4,6 +4,62 @@ import * as crypto from 'crypto';
 import * as  soap from 'soap';
 import * as xml2js from 'xml2js';
 class App {
+    sendSMS(msisdn: string,content:string,brandname:string) {
+        var deferred = Q.defer();
+        const url = 'http://183.182.100.154:8181/apiSendSms.php?wsdl';
+        const args = {
+                username: "Huakathi_2020",
+                password: "Huakathi!@#123",
+                brand_name:brandname,
+                msisdn:msisdn,
+                language_id:0,                
+                content:content,
+                
+        };
+        soap.createClient(url, function (err, client) {
+            if (err) {
+                console.log(err);
+                deferred.reject(err);
+            } else {
+                //client.gwOperation.Input=args;
+               //console.log(client);
+               console.log(args);
+                
+                client.sendSMS (args, (err: any, result: any, opt: any, extraHeader: any) => {
+                    if (err) {
+                        console.log(err);
+                        deferred.reject(err);
+                    } else {
+                        // console.log(opt);     
+                        // console.log(extraHeader);     
+                        console.log(result);
+                        deferred.resolve({error_code:result.error_code.$value,
+                            description:JSON.parse(result.descr.$value).descr,
+                            msg_id:JSON.parse(result.descr.$value).msg_id});           
+                       // console.log('last request: ', client.lastRequest) // <-- here                                        
+                        // xml2js.parseString(JSON.stringify(result), (err, res) => {
+                        //     if (err) {
+                        //         console.log(err);
+                        //         deferred.reject(err);
+                        //     } else {
+                        //         // console.log(res);
+                        //         // let r = res['S:Envelope']['S:Body'][0]['ns2:checkVtrackingResponse'][0].return[0];
+                        //         // console.log(r);
+                        //         // r={ description: [ 'SUCCESS' ],
+                        //         // endPromotion: [ '11/11/2019' ],
+                        //         // msisdn: [ '8562097299830' ],
+                        //         // responseCode: [ '0' ],
+                        //         // startPromotion: [ '11/11/2018' ],
+                        //         // typeCheck: [ '1' ] };                                               
+                        //         deferred.resolve(res)
+                        //     }
+                        // });
+                    }
+                });
+            }
+        });
+        return deferred.promise;
+    }
     checkStartEndPromotion(msisdn: string) {
         var deferred = Q.defer();
         const url = 'http://183.182.100.133:8999/BCCSGateway?wsdl';
@@ -211,6 +267,33 @@ class App {
         { code: "33", description: "No history charge detail" },
         { code: "-99", description: "Unhandled error, please contact administrator " },
         { code: "0", description: "Success" }];
+    _errorCode_SMS=[{
+        "error_code":0,
+        "description":"Invalid username / password"
+    },{
+        "error_code":1,
+        "description":"Send Sms Success"
+    },{
+        "error_code":2,
+        "description":"Invalid Brandname"
+    },{
+        "error_code":3,
+        "description":"Send SMS Failed"
+    },{
+        "error_code":4,
+        "description":"Not enough money"
+    },{
+        "error_code":5,
+        "description":"Company not permission send    SMS via API"
+    },{
+        "error_code":6,
+        "DESCRIPTION":"Invalid IP Address"
+    },{
+        "error_code":7,
+        "description":"Invalid phone number"
+    }
+
+];
     _errorCode = [
         {
             "ERROR_CODE": 1000,

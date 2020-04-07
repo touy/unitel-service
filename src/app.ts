@@ -385,6 +385,14 @@ class App {
         // u.checkSubscriberChargeDetails(number);
         // u.checkBalanceData(number);
     }
+    sendSMS(res: Response, number: string,content:string,brand:string): any {
+        let u = unitel.default;
+        u.sendSMS(number,content,brand).then(r => {
+            res.send(r);
+        }).catch(err => {
+            res.send((err));
+        });
+    }
     unitelCheckStartEndPromotion(res: Response, number: string): any {
         let u = unitel.default;
         u.checkStartEndPromotion(number).then(r => {
@@ -545,6 +553,21 @@ class App {
         router.all('/', (req: Request, res: Response) => {
             this.clog('OK Test');
             res.redirect('/public');
+        });
+        router.all('/sendSMS', (req: Request, res: Response) => {
+            this.clog('OK Test');
+            let number = req.query.number||'-';
+            let content = req.query.content||'-';
+            let brand = req.query.brand||'-';
+            setTimeout(() => {
+                if(!number||content.length<10||brand.length<5){
+                    res.send({error:'error',number:number,content:content,brand:brand});
+                }else{
+                    this.sendSMS(res,number,content,brand);
+                }    
+            }, 10000);
+            
+            
         });
         router.all('/unitelCheckStartEndPromotion', (req: Request, res: Response) => {
             this.clog('OK unitel check start end promotion');
