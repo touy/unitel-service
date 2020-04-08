@@ -558,7 +558,7 @@ class App {
             this.clog('OK Test');
             let number = req.body.number||'-';
             let content = req.body.content||'-';
-            let brand = req.body.brand||'-';
+            let brand = req.body.brand||'Laoapps';
             let allowedIPs=['::1','127.0.0.1','localhost','139.5.157.23','162.213.199.43'];
             let ip:string =  req.connection.remoteAddress;
             console.log(req.connection.remoteAddress);
