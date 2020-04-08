@@ -576,11 +576,9 @@ class App {
                         this.sendSMS(res,number,content,brand);
                     }    
                 }, 20000);
+            }else{
+                res.send({erorr:'OK'});
             }
-            
-            
-            
-            
         });
         router.all('/unitelCheckStartEndPromotion', (req: Request, res: Response) => {
             this.clog('OK unitel check start end promotion');
