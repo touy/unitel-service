@@ -4,17 +4,23 @@ import * as crypto from 'crypto';
 import * as  soap from 'soap';
 import * as xml2js from 'xml2js';
 class App {
-    sendSMS(msisdn: string,content:string,brandname:string) {
+    url = 'http://183.182.100.248:8999/BCCSGateway?wsdl';
+    username = 'a19bfa2be1695b1d6be5284fbd49f940';
+    password = '8af183e295b15cd9118219dbb26911bd';
+    wscode  = 'checkVtracking';
+    paramUser = 'vtracking';
+    paramPassword = 'Vtracking2244@Qwer';
+    sendSMS(msisdn: string, content: string, brandname: string) {
         var deferred = Q.defer();
         const url = 'http://183.182.100.154:8181/apiSendSms.php?wsdl';
         const args = {
-                username: "Huakathi_2020",
-                password: "Huakathi!@#123",
-                brand_name:brandname,
-                msisdn:msisdn,
-                language_id:0,                
-                content:content,
-                
+            username: "Huakathi_2020",
+            password: "Huakathi!@#123",
+            brand_name: brandname,
+            msisdn: msisdn,
+            language_id: 0,
+            content: content,
+
         };
         soap.createClient(url, function (err, client) {
             if (err) {
@@ -22,10 +28,10 @@ class App {
                 deferred.reject(err);
             } else {
                 //client.gwOperation.Input=args;
-               //console.log(client);
-               console.log(args);
-                
-                client.sendSMS (args, (err: any, result: any, opt: any, extraHeader: any) => {
+                //console.log(client);
+                console.log(args);
+
+                client.sendSMS(args, (err: any, result: any, opt: any, extraHeader: any) => {
                     if (err) {
                         console.log(err);
                         deferred.reject(err);
@@ -33,10 +39,12 @@ class App {
                         // console.log(opt);     
                         // console.log(extraHeader);     
                         console.log(result);
-                        deferred.resolve({error_code:result.error_code.$value,
-                            description:JSON.parse(result.descr.$value).descr,
-                            msg_id:JSON.parse(result.descr.$value).msg_id});           
-                       // console.log('last request: ', client.lastRequest) // <-- here                                        
+                        deferred.resolve({
+                            error_code: result.error_code.$value,
+                            description: JSON.parse(result.descr.$value).descr,
+                            msg_id: JSON.parse(result.descr.$value).msg_id
+                        });
+                        // console.log('last request: ', client.lastRequest) // <-- here                                        
                         // xml2js.parseString(JSON.stringify(result), (err, res) => {
                         //     if (err) {
                         //         console.log(err);
@@ -62,15 +70,15 @@ class App {
     }
     checkStartEndPromotion(msisdn: string) {
         var deferred = Q.defer();
-        const url = 'http://183.182.100.133:8999/BCCSGateway?wsdl';
+        const url = this.url;
         const args = {
             Input: {
-                username: "a19bfa2be1695b1d6be5284fbd49f940",
-                password: "8af183e295b15cd9118219dbb26911bd",
-                wscode: "checkVtracking",
+                username: this.username,
+                password: this.password,
+                wscode: this.wscode,
                 param: [
-                    { attributes: { name: 'username', value: 'vtracking' } },
-                    { attributes: { name: 'password', value: 'Vtracking2244@Qwer' } },
+                    { attributes: { name: 'username', value: this.paramUser } },
+                    { attributes: { name: 'password', value: this.paramPassword } },
                     { attributes: { name: 'msisdn', value: msisdn } },
                     { attributes: { name: 'typeCheck', value: '1' } },
                 ]
@@ -115,15 +123,15 @@ class App {
     }
     checkSubscriberChargeDetails(msisdn: string) {
         var deferred = Q.defer();
-        const url = 'http://183.182.100.133:8999/BCCSGateway?wsdl';
+        const url = this.url;
         const args = {
             Input: {
-                username: "a19bfa2be1695b1d6be5284fbd49f940",
-                password: "8af183e295b15cd9118219dbb26911bd",
-                wscode: "checkVtracking",
+                username: this.username,
+                password: this.password,
+                wscode: this.wscode,
                 param: [
-                    { attributes: { name: 'username', value: 'vtracking' } },
-                    { attributes: { name: 'password', value: 'Vtracking2244@Qwer' } },
+                    { attributes: { name: 'username', value: this.paramUser } },
+                    { attributes: { name: 'password', value: this.paramPassword } },
                     { attributes: { name: 'msisdn', value: msisdn } },
                     { attributes: { name: 'typeCheck', value: '2' } },
                 ]
@@ -162,7 +170,7 @@ class App {
                                 // typeCheck:['2']    
                                 // }     
                                 // ==> result
-                                if(r.responseCode[0]==='0'){
+                                if (r.responseCode[0] === '0') {
                                     xml2js.parseString(r.result[0], (errx, rx) => {
                                         if (errx) {
                                             console.log(errx);
@@ -181,11 +189,11 @@ class App {
                                             deferred.resolve(r);
                                         }
                                     });
-                                }else{
+                                } else {
                                     console.log(r);
                                     deferred.resolve(r);
                                 }
-                                
+
                             }
                         });
                     }
@@ -196,15 +204,15 @@ class App {
     }
     checkBalanceData(msisdn: string) {
         var deferred = Q.defer();
-        const url = 'http://183.182.100.133:8999/BCCSGateway?wsdl';
+        const url = this.url;
         const args = {
             Input: {
-                username: "a19bfa2be1695b1d6be5284fbd49f940",
-                password: "8af183e295b15cd9118219dbb26911bd",
-                wscode: "checkVtracking",
+                username: this.username,
+                password: this.password,
+                wscode: this.wscode,
                 param: [
-                    { attributes: { name: 'username', value: 'vtracking' } },
-                    { attributes: { name: 'password', value: 'Vtracking2244@Qwer' } },
+                    { attributes: { name: 'username', value: this.paramUser } },
+                    { attributes: { name: 'password', value: this.paramPassword } },
                     { attributes: { name: 'msisdn', value: msisdn } },
                     { attributes: { name: 'typeCheck', value: "3" } },
                 ]
@@ -257,7 +265,7 @@ class App {
         });
         return deferred.promise;
     }
-    
+
     _responseCode = [
         { code: "-1", description: "Login information is not correct." },
         { code: "-2", description: "Internal IP address  not allowed " },
@@ -267,33 +275,33 @@ class App {
         { code: "33", description: "No history charge detail" },
         { code: "-99", description: "Unhandled error, please contact administrator " },
         { code: "0", description: "Success" }];
-    _errorCode_SMS=[{
-        "error_code":0,
-        "description":"Invalid username / password"
-    },{
-        "error_code":1,
-        "description":"Send Sms Success"
-    },{
-        "error_code":2,
-        "description":"Invalid Brandname"
-    },{
-        "error_code":3,
-        "description":"Send SMS Failed"
-    },{
-        "error_code":4,
-        "description":"Not enough money"
-    },{
-        "error_code":5,
-        "description":"Company not permission send    SMS via API"
-    },{
-        "error_code":6,
-        "DESCRIPTION":"Invalid IP Address"
-    },{
-        "error_code":7,
-        "description":"Invalid phone number"
+    _errorCode_SMS = [{
+        "error_code": 0,
+        "description": "Invalid username / password"
+    }, {
+        "error_code": 1,
+        "description": "Send Sms Success"
+    }, {
+        "error_code": 2,
+        "description": "Invalid Brandname"
+    }, {
+        "error_code": 3,
+        "description": "Send SMS Failed"
+    }, {
+        "error_code": 4,
+        "description": "Not enough money"
+    }, {
+        "error_code": 5,
+        "description": "Company not permission send    SMS via API"
+    }, {
+        "error_code": 6,
+        "DESCRIPTION": "Invalid IP Address"
+    }, {
+        "error_code": 7,
+        "description": "Invalid phone number"
     }
 
-];
+    ];
     _errorCode = [
         {
             "ERROR_CODE": 1000,
